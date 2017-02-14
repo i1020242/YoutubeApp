@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="10117" systemVersion="15F34" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" layoutMarginsFollowReadableWidth="YES" reuseIdentifier="" id="gTV-IL-0wX" customClass="HomeCollectionViewCell" customModule="YouTubeApp" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="370" height="228"/>
+            <autoresizingMask key="autoresizingMask"/>
+            <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                <rect key="frame" x="0.0" y="0.0" width="370" height="228"/>
+                <subviews>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="S0u-o1-zkQ">
+                        <rect key="frame" x="84" y="167" width="42" height="21"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="21" id="J0u-nR-dmb"/>
+                        </constraints>
+                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                        <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                        <nil key="highlightedColor"/>
+                        <variation key="default">
+                            <mask key="constraints">
+                                <exclude reference="J0u-nR-dmb"/>
+                            </mask>
+                        </variation>
+                    </label>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="u2R-ry-Mux">
+                        <rect key="frame" x="84" y="199" width="42" height="21"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="21" id="fUa-9m-hQo"/>
+                        </constraints>
+                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                        <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                        <nil key="highlightedColor"/>
+                        <variation key="default">
+                            <mask key="constraints">
+                                <exclude reference="fUa-9m-hQo"/>
+                            </mask>
+                        </variation>
+                    </label>
+                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="hZx-jV-Cgm">
+                        <rect key="frame" x="8" y="166" width="55" height="54"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="54" id="2Co-KB-rPN"/>
+                            <constraint firstAttribute="height" constant="54" id="8an-O2-Q6f"/>
+                            <constraint firstAttribute="width" constant="55" id="GeT-qb-aYJ"/>
+                        </constraints>
+                        <variation key="default">
+                            <mask key="constraints">
+                                <exclude reference="2Co-KB-rPN"/>
+                            </mask>
+                        </variation>
+                    </imageView>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="LuN-rR-MIZ" customClass="TFSwipeShrinkView" customModule="YouTubeApp" customModuleProvider="target">
+                        <rect key="frame" x="0.0" y="0.0" width="370" height="158"/>
+                        <subviews>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="UvT-NY-FO0">
+                                <rect key="frame" x="0.0" y="0.0" width="370" height="158"/>
+                            </imageView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="UvT-NY-FO0" firstAttribute="leading" secondItem="LuN-rR-MIZ" secondAttribute="leading" id="6Dn-Vy-GMj"/>
+                            <constraint firstAttribute="bottom" secondItem="UvT-NY-FO0" secondAttribute="bottom" id="YAW-7j-CJg"/>
+                            <constraint firstAttribute="trailing" secondItem="UvT-NY-FO0" secondAttribute="trailing" id="s6N-wq-KbZ"/>
+                            <constraint firstItem="UvT-NY-FO0" firstAttribute="top" secondItem="LuN-rR-MIZ" secondAttribute="top" id="wao-5G-pfm"/>
+                        </constraints>
+                    </view>
+                </subviews>
+                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+            </view>
+            <constraints>
+                <constraint firstAttribute="bottom" secondItem="hZx-jV-Cgm" secondAttribute="bottom" constant="8" id="7Bu-1G-ayi"/>
+                <constraint firstAttribute="trailing" secondItem="LuN-rR-MIZ" secondAttribute="trailing" id="7mL-tp-Yas"/>
+                <constraint firstItem="S0u-o1-zkQ" firstAttribute="top" secondItem="hZx-jV-Cgm" secondAttribute="top" constant="1" id="8f4-EJ-9mm"/>
+                <constraint firstAttribute="bottom" secondItem="hZx-jV-Cgm" secondAttribute="bottom" constant="8" id="A2z-Dz-ZRb"/>
+                <constraint firstItem="hZx-jV-Cgm" firstAttribute="leading" secondItem="gTV-IL-0wX" secondAttribute="leading" constant="8" id="FoR-vw-z7T"/>
+                <constraint firstAttribute="bottom" secondItem="u2R-ry-Mux" secondAttribute="bottom" constant="8" id="GaS-yK-z6Y"/>
+                <constraint firstItem="LuN-rR-MIZ" firstAttribute="leading" secondItem="gTV-IL-0wX" secondAttribute="leading" id="OTO-jp-odR"/>
+                <constraint firstItem="LuN-rR-MIZ" firstAttribute="top" secondItem="gTV-IL-0wX" secondAttribute="top" id="ayr-Ks-FIM"/>
+                <constraint firstItem="hZx-jV-Cgm" firstAttribute="top" secondItem="LuN-rR-MIZ" secondAttribute="bottom" constant="8" id="cPO-vh-Zdg"/>
+                <constraint firstItem="u2R-ry-Mux" firstAttribute="leading" secondItem="hZx-jV-Cgm" secondAttribute="trailing" constant="21" id="fF5-XC-CYk"/>
+                <constraint firstAttribute="bottom" secondItem="u2R-ry-Mux" secondAttribute="bottom" constant="8" id="qt8-uw-0HQ"/>
+                <constraint firstItem="S0u-o1-zkQ" firstAttribute="leading" secondItem="hZx-jV-Cgm" secondAttribute="trailing" constant="21" id="xMq-PL-V8g"/>
+            </constraints>
+            <size key="customSize" width="370" height="228"/>
+            <variation key="default">
+                <mask key="constraints">
+                    <exclude reference="7Bu-1G-ayi"/>
+                    <exclude reference="GaS-yK-z6Y"/>
+                </mask>
+            </variation>
+            <connections>
+                <outlet property="img" destination="hZx-jV-Cgm" id="PyI-A1-Wmk"/>
+                <outlet property="lblArtist" destination="u2R-ry-Mux" id="okf-M7-1cP"/>
+                <outlet property="lblName" destination="S0u-o1-zkQ" id="07n-4C-uZA"/>
+                <outlet property="m_backgroundImg" destination="UvT-NY-FO0" id="wBb-rf-DFe"/>
+            </connections>
+            <point key="canvasLocation" x="77" y="-11"/>
+        </collectionViewCell>
+    </objects>
+</document>
