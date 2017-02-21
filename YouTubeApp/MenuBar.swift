@@ -78,11 +78,12 @@ class MenuBar: UIView, UICollectionViewDelegate, UICollectionViewDataSource, UIC
         
         switch indexPath.item {
         case 0: setCellWhenScrollMenuBar(0)
+        break;
         case 1: setCellWhenScrollMenuBar(1)
+        break;
         case 2: setCellWhenScrollMenuBar(2)
-        //case 3: setCellWhenScrollMenuBar(3)
+        break;
         default: break
-            //setCellWhenScrollMenuBar(0)
         }
         
         UIView.animateWithDuration(0.75, delay: 0.75, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .CurveEaseOut, animations: {

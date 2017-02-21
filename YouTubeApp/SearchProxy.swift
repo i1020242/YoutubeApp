@@ -9,13 +9,11 @@
 import UIKit
 
 class SearchProxy: NSObject {
-    //let youtubeURL = "https://www.googleapis.com/youtube/v3/search?part=snippet&q=vunglamebay&maxResults=10&type=video&key=AIzaSyC9doiHcYM5QMhEEwtnyLaIKsHs2UyR0Go"
+    
     
     func fetchVideosSearch(strSearch:String, completion:DidGetResultClosure, error:ErrorClosure){
-        //fetchDataForString("\(baseURL)/home.json", completion:completion, errorHandler:error)
         let newStr = strSearch .stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet .URLHostAllowedCharacterSet())
         let youtubeURL = String(format: "https://www.googleapis.com/youtube/v3/search?part=snippet&q=%@&maxResults=10&type=video&key=AIzaSyC9doiHcYM5QMhEEwtnyLaIKsHs2UyR0Go", newStr!)
-        
         fetchDataForStringYT("\(youtubeURL)", completion:completion, errorHandler:error)
     }
     
