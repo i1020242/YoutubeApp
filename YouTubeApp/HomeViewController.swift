@@ -38,7 +38,6 @@ class HomeViewController: UICollectionViewController, UICollectionViewDelegateFl
         setUpHome()
         setUpMenuBarView()
         setupNavigationBar()
-        
     }
     
     func setUpHome()->Void{

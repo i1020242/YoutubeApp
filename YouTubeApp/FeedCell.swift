@@ -45,7 +45,6 @@ class FeedCell: UICollectionViewCell, UICollectionViewDelegateFlowLayout,GIDSign
         collectionView.contentInset = UIEdgeInsetsMake(0, 0, 0, 0)
         addSubview(collectionView)
         setupFinishLogin()
-        testF()
     }
     
     func fetchVideo(){
@@ -87,16 +86,6 @@ class FeedCell: UICollectionViewCell, UICollectionViewDelegateFlowLayout,GIDSign
             
             print("\(error.localizedDescription)")
         }
-    }
-    func testF(){
-        let name = DynamicString("Steve")
-        name.bind { (value) in
-            print(value)
-        }
-        
-        name.value = "abx"
-        name.value = "Ahi"
-        name.value = "A-Z"
     }
 }
 
@@ -150,7 +139,7 @@ extension FeedCell:UICollectionViewDataSource {
     }
     
     func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
-        let abc:SearchModel = self.videos![indexPath.row]
+        let abc = self.videos![indexPath.row]
         let videoID:String = abc.videoId!
         let youtubeURL = "https://www.youtube.com/embed/\(videoID)"
         self.delegate?.playVideoFeed(youtubeURL)

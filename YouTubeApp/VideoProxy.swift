@@ -15,23 +15,18 @@ class VideoProxy: NSObject {
     
     let baseURL = "https://s3-us-west-2.amazonaws.com/youtubeassets"
     private let youtubeURL = "https://www.googleapis.com/youtube/v3/search?part=snippet&q=vatvo&type=video&key=AIzaSyC9doiHcYM5QMhEEwtnyLaIKsHs2UyR0Go"
-    /**
-     - Parameter:   completion closure
-     
-     - returns: An array of video Model
-     */
+
     func fetchVideos(tokenStr:String,completion:DidGetResultClosure, error:ErrorClosure){
         let urltokenString = "https://www.googleapis.com/youtube/v3/activities?part=snippet&home=true&maxResults=15&access_token=\(tokenStr)"
-        //fetchDataForString("\(baseURL)/home.json", completion:completion, errorHandler:error)
-        fetchDataForStringYT(urltokenString, completion:completion, errorHandler:error)
+        fetchDataForKey(urltokenString, completion:completion, errorHandler:error)
     }
     
     func fetchTrending(completion:DidGetResultClosure, error:ErrorClosure){
         let urlTrending = "https://www.googleapis.com/youtube/v3/videos?part=snippet&chart=mostPopular&regionCode=vn&maxResults=25&key=AIzaSyC9doiHcYM5QMhEEwtnyLaIKsHs2UyR0Go"
-        fetchDataForStringYT(urlTrending, completion:completion, errorHandler:error)
+        fetchDataForKey(urlTrending, completion:completion, errorHandler:error)
     }
         
-    func fetchDataForStringYT(urlString:String, completion:DidGetResultClosure, errorHandler:ErrorClosure){
+    func fetchDataForKey(urlString:String, completion:DidGetResultClosure, errorHandler:ErrorClosure){
         
         let url = NSURL(string: urlString)
         var videosSearch = [SearchModel]()
@@ -42,6 +37,7 @@ class VideoProxy: NSObject {
                 print(error)
                 return
             }
+            
             do {
                 let json = try NSJSONSerialization.JSONObjectWithData(data!, options: .MutableContainers)
                 if let items = json["items"] as? [[String:AnyObject]] {
@@ -50,17 +46,18 @@ class VideoProxy: NSObject {
                         let searchModel = SearchModel()
                         if let videoId = item["id"] as? String {
                             searchModel.videoId = videoId
-                            print(videoId)
+                            print("Id is \(videoId)")
                         }
                         
                         if let snippets = item["snippet"] as? [String:AnyObject] {
                             if let title = snippets["title"] as? String {
                                 searchModel.title = title
-                                
                             }
+                            
                             if let channelTitle = snippets["channelTitle"] as? String {
                                 searchModel.channelTitle = channelTitle
                             }
+                            
                             if let thumbnails = snippets["thumbnails"] as? [String:AnyObject] {
                                 
                                 
@@ -68,7 +65,7 @@ class VideoProxy: NSObject {
                                     
                                     if let url = medium["url"] as? String {
                                         searchModel.profileImage = url
-                                        print(url)
+                                        //print(url)
                                     }
                                 }
                             }
