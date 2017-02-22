@@ -13,5 +13,4 @@ class ShareData: NSObject {
     static let shareInstance = ShareData()
     let videoHomeProxy = VideoProxy()
     let videoSearch = SearchProxy()
-    let abc = 5
 }

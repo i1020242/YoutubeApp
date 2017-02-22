@@ -84,7 +84,7 @@ class MenuBar: UIView, UICollectionViewDelegate, UICollectionViewDataSource, UIC
         case 2: setCellWhenScrollMenuBar(2)
         break;
         default: break
-        }
+    }
         
         UIView.animateWithDuration(0.75, delay: 0.75, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .CurveEaseOut, animations: {
             self.layoutIfNeeded()

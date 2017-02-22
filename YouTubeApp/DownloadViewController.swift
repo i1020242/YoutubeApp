@@ -13,6 +13,10 @@ import CoreData
 let CELL_ID_DOWNLOAD = "cellID"
 
 class DownloadViewController: UIViewController {
+    enum ErrorEncryption:ErrorType {
+        case Empty
+        case Short
+    }
     @IBOutlet weak var tblDownload: UITableView!
     var activeDownloads = [String: DownloadTask]()
     lazy var downloadsSession: NSURLSession = {
@@ -112,7 +116,7 @@ class DownloadViewController: UIViewController {
                 player.prepareToPlay()
                 player.play()
             } catch let error {
-                
+                print(error)
             }
         }
     }

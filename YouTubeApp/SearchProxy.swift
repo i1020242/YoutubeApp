@@ -36,7 +36,6 @@ class SearchProxy: NSObject {
                         if let videoId = item["id"] as? [String:AnyObject] {
                             if let videoIdd = videoId["videoId"] as? String {
                                 searchModel.videoId = videoIdd
-                                //print(videoIdd)
                             }
                         }
                         
@@ -72,7 +71,6 @@ class SearchProxy: NSObject {
             }
         }.resume()
     }
-    
     
     func fetchMP3Link(urlString:String, completion:DidGetResultClosure, errorHandler:ErrorClosure) {
         

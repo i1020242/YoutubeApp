@@ -12,8 +12,7 @@ typealias ErrorClosure = (errorClosure:ErrorType)->()
 
 
 class VideoProxy: NSObject {
-    
-    let baseURL = "https://s3-us-west-2.amazonaws.com/youtubeassets"
+
     private let youtubeURL = "https://www.googleapis.com/youtube/v3/search?part=snippet&q=vatvo&type=video&key=AIzaSyC9doiHcYM5QMhEEwtnyLaIKsHs2UyR0Go"
 
     func fetchVideos(tokenStr:String,completion:DidGetResultClosure, error:ErrorClosure){

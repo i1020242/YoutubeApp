@@ -36,7 +36,6 @@ class FeedCell: UICollectionViewCell, UICollectionViewDelegateFlowLayout,GIDSign
     var videos : [SearchModel]?
     override func awakeFromNib() {
         super.awakeFromNib()
-        //fetchVideo()
         collectionView.scrollIndicatorInsets = UIEdgeInsetsZero
         collectionView.backgroundColor = UIColor .whiteColor()
         let nibname = UINib(nibName: "HomeCollectionViewCell", bundle: nil)
@@ -54,7 +53,6 @@ class FeedCell: UICollectionViewCell, UICollectionViewDelegateFlowLayout,GIDSign
             self.videos = result as? [SearchModel]
             self.collectionView .reloadData()
             }) { (errorClosure) in
-                
         }
     }
     func setupFinishLogin(){
