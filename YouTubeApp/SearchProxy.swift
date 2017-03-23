@@ -11,25 +11,25 @@ import UIKit
 class SearchProxy: NSObject {
     
     
-    func fetchVideosSearch(strSearch:String, completion:DidGetResultClosure, error:ErrorClosure){
-        let newStr = strSearch .stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet .URLHostAllowedCharacterSet())
+    func fetchVideosSearch(_ strSearch:String, completion:@escaping DidGetResultClosure, error:@escaping ErrorClosure){
+        let newStr = strSearch .addingPercentEncoding(withAllowedCharacters: CharacterSet.urlHostAllowed)
         let youtubeURL = String(format: "https://www.googleapis.com/youtube/v3/search?part=snippet&q=%@&maxResults=10&type=video&key=AIzaSyC9doiHcYM5QMhEEwtnyLaIKsHs2UyR0Go", newStr!)
         fetchDataForStringYT("\(youtubeURL)", completion:completion, errorHandler:error)
     }
     
-    func fetchDataForStringYT(urlString:String, completion:DidGetResultClosure, errorHandler:ErrorClosure){
-        let url = NSURL(string: urlString)
+    func fetchDataForStringYT(_ urlString:String, completion:@escaping DidGetResultClosure, errorHandler:@escaping ErrorClosure){
+        let url = URL(string: urlString)
         var videosSearch = [SearchModel]()
         
         var arrTemp = [AnyObject]()
-        NSURLSession.sharedSession().dataTaskWithURL(url!) { (data, response, error) in
+        URLSession.shared.dataTask(with: url!, completionHandler: { (data, response, error) in
             if error != nil {
                 print(error)
                 return
             }
             do {
-                let json = try NSJSONSerialization.JSONObjectWithData(data!, options: .MutableContainers)
-                if let items = json["items"] as? [[String:AnyObject]] {
+                let json = try JSONSerialization.jsonObject(with: data!, options: .mutableContainers) as? [String:Any]
+                if let items = json?["items"] as? [[String:Any]] {
                     
                     for item in items {
                         let searchModel = SearchModel()
@@ -63,33 +63,33 @@ class SearchProxy: NSObject {
                     }
                     videosSearch = arrTemp as! [SearchModel]
                 }
-                dispatch_async(dispatch_get_main_queue(), {
-                    completion(result: videosSearch, errCode: "errorCode")
+                DispatchQueue.main.async(execute: {
+                    completion(videosSearch as AnyObject, "errorCode")
                 })
             } catch let jsonError{
-                errorHandler(errorClosure: jsonError)
+                errorHandler(jsonError)
             }
-        }.resume()
+        }) .resume()
     }
     
-    func fetchMP3Link(urlString:String, completion:DidGetResultClosure, errorHandler:ErrorClosure) {
+    func fetchMP3Link(_ urlString:String, completion:@escaping DidGetResultClosure, errorHandler:@escaping ErrorClosure) {
         
-        if let url = NSURL(string: urlString) {
-        NSURLSession.sharedSession().dataTaskWithURL(url) { (data, response, error) in
+        if let url = URL(string: urlString) {
+        URLSession.shared.dataTask(with: url, completionHandler: { (data, response, error) in
             
             if error != nil {
                 print(error)
                 return
             }
             do {
-                let json = try NSJSONSerialization.JSONObjectWithData(data!, options: .MutableContainers)
+                let json = try JSONSerialization.jsonObject(with: data!, options: .mutableContainers) as! [String:Any]
                 if let link = json["link"] as? String {
-                    completion(result: link, errCode: "")
+                    completion(link as AnyObject, "")
                 }
             } catch let jsonError{
-                errorHandler(errorClosure: jsonError)
+                errorHandler(jsonError)
                 }
-            }.resume()
+            }) .resume()
         }
     }
 }

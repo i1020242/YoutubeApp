@@ -11,18 +11,22 @@ import GoogleSignIn
 import Google
 
 protocol FeedCellDelegate {
-    func playVideoFeed(strVideoId:NSString)
+    func playVideoFeed(_ strVideoId:NSString)
 }
 
 let homeCell = "homeCell"
 
 class FeedCell: UICollectionViewCell, UICollectionViewDelegateFlowLayout,GIDSignInDelegate {
+    public func sign(_ signIn: GIDSignIn!, didSignInFor user: GIDGoogleUser!, withError error: Error!) {
+        //
+    }
+
     
     var delegate:FeedCellDelegate?
     
     lazy var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
-        layout.scrollDirection = .Vertical
+        layout.scrollDirection = .vertical
         let navigation = UINavigationController()
         let b=navigation.navigationBar.frame.size.height
 
@@ -36,10 +40,10 @@ class FeedCell: UICollectionViewCell, UICollectionViewDelegateFlowLayout,GIDSign
     var videos : [SearchModel]?
     override func awakeFromNib() {
         super.awakeFromNib()
-        collectionView.scrollIndicatorInsets = UIEdgeInsetsZero
-        collectionView.backgroundColor = UIColor .whiteColor()
+        collectionView.scrollIndicatorInsets = UIEdgeInsets.zero
+        collectionView.backgroundColor = UIColor.white
         let nibname = UINib(nibName: "HomeCollectionViewCell", bundle: nil)
-        collectionView.registerNib(nibname, forCellWithReuseIdentifier: homeCell)
+        collectionView.register(nibname, forCellWithReuseIdentifier: homeCell)
         
         collectionView.contentInset = UIEdgeInsetsMake(0, 0, 0, 0)
         addSubview(collectionView)
@@ -49,7 +53,7 @@ class FeedCell: UICollectionViewCell, UICollectionViewDelegateFlowLayout,GIDSign
     func fetchVideo(){
         
         let tokenStr = GIDSignIn.sharedInstance().currentUser.authentication.accessToken
-        ShareData.shareInstance.videoHomeProxy .fetchVideos(tokenStr, completion: { (result, errCode)-> Void in
+        ShareData.shareInstance.videoHomeProxy .fetchVideos(tokenStr!, completion: { (result, errCode)-> Void in
             self.videos = result as? [SearchModel]
             self.collectionView .reloadData()
             }) { (errorClosure) in
@@ -63,15 +67,15 @@ class FeedCell: UICollectionViewCell, UICollectionViewDelegateFlowLayout,GIDSign
         GIDSignIn.sharedInstance().delegate = self
     }
     
-    func application(application: UIApplication,
-                     openURL url: NSURL, sourceApplication: String?, annotation: AnyObject) -> Bool {
+    func application(_ application: UIApplication,
+                     openURL url: URL, sourceApplication: String?, annotation: AnyObject) -> Bool {
 
-        return GIDSignIn.sharedInstance().handleURL(url,
+        return GIDSignIn.sharedInstance().handle(url,
                                                     sourceApplication: sourceApplication,
                                                     annotation: annotation)
     }
     
-    func signIn(signIn: GIDSignIn!, didSignInForUser user: GIDGoogleUser!,
+    func sign(_ signIn: GIDSignIn!, didSignInFor user: GIDGoogleUser!,
                 withError error: NSError!) {
         if (error == nil) {
             
@@ -94,39 +98,39 @@ extension FeedCell:UICollectionViewDelegate {
 
 //MARK: CollectionView DataSource
 extension FeedCell:UICollectionViewDataSource {
-    func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if videos == nil {
             return 0
         }
         return videos!.count
     }
     
-    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         
         let height = (frame.width - 16 - 16) * 9 / 16
-        return CGSizeMake(frame.width, height + 16 + 88)
+        return CGSize(width: frame.width, height: height + 16 + 88)
     }
     
-    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAtIndex section: Int) -> CGFloat {
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
         return 0
     }
     
-    func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCellWithReuseIdentifier(homeCell, forIndexPath: indexPath)
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: homeCell, for: indexPath)
             as! HomeCollectionViewCell
-        cell.backgroundColor = UIColor .whiteColor()
+        cell.backgroundColor = UIColor.white
         let video = self.videos![indexPath.item]
         
         cell.lblName.text = video.title
         cell.lblArtist.text = video.channelTitle
         
         if (video.profileImage != nil) {
-            let urlProfile = NSURL(string: (video.profileImage)!)
-            let urlBackground = NSURL(string: (video.profileImage)!)
-            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
-                let data = NSData(contentsOfURL: urlProfile!)
-                let dataThumnail = NSData(contentsOfURL: urlBackground!)
-                dispatch_async(dispatch_get_main_queue(), {
+            let urlProfile = URL(string: (video.profileImage)!)
+            let urlBackground = URL(string: (video.profileImage)!)
+            DispatchQueue.global(priority: DispatchQueue.GlobalQueuePriority.default).async {
+                let data = try? Data(contentsOf: urlProfile!)
+                let dataThumnail = try? Data(contentsOf: urlBackground!)
+                DispatchQueue.main.async(execute: {
                     cell.img.image = UIImage(data: data!)
                     cell.m_backgroundImg.image = UIImage(data: dataThumnail!)
                 });
@@ -136,13 +140,12 @@ extension FeedCell:UICollectionViewDataSource {
         return cell
     }
     
-    func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let abc = self.videos![indexPath.row]
         let videoID:String = abc.videoId!
         let youtubeURL = "https://www.youtube.com/embed/\(videoID)"
-        self.delegate?.playVideoFeed(youtubeURL)
+        self.delegate?.playVideoFeed(youtubeURL as NSString)//on homeVC
     }
 
-    
-    
+
 }

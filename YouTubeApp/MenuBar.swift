@@ -9,7 +9,7 @@
 import UIKit
 
 public protocol MenuBarDelegate : NSObjectProtocol {
-    func scrollToMenuIndex(index:Int)
+    func scrollToMenuIndex(_ index:Int)
     
 }
 
@@ -23,7 +23,7 @@ class MenuBar: UIView, UICollectionViewDelegate, UICollectionViewDataSource, UIC
             horizontalBarView.backgroundColor = UIColor(white: 0.95, alpha: 1)
             horizontalBarView.translatesAutoresizingMaskIntoConstraints = false
         
-            horizontalBarView.frame = CGRectMake(0, 47, screenSize.width/3, 5)
+            horizontalBarView.frame = CGRect(x: 0, y: 47, width: screenSize.width/3, height: 5)
             horizontalBarView.translatesAutoresizingMaskIntoConstraints = false
             return horizontalBarView
         }()
@@ -44,8 +44,8 @@ class MenuBar: UIView, UICollectionViewDelegate, UICollectionViewDataSource, UIC
     override init(frame: CGRect) {
         super.init(frame: frame)
         let nibName = UINib(nibName: "MenuBarCellCollectionViewCell", bundle: nil)
-        collectionView.registerNib(nibName, forCellWithReuseIdentifier: cellMenu)
-        collectionView.backgroundColor = UIColor .redColor()
+        collectionView.register(nibName, forCellWithReuseIdentifier: cellMenu)
+        collectionView.backgroundColor = UIColor.red
         addSubview(collectionView)
         addSubview(horizontalBarView)
     }
@@ -54,27 +54,27 @@ class MenuBar: UIView, UICollectionViewDelegate, UICollectionViewDataSource, UIC
         fatalError("init(coder:) has not been implemented")
     }
     
-    func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return 3
     }
     
-    func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCellWithReuseIdentifier(cellMenu, forIndexPath: indexPath)
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellMenu, for: indexPath)
         as! MenuBarCellCollectionViewCell
         cell.img.image = UIImage(named: cells[indexPath.item])
         return cell
     }
     
-    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         
-        return CGSizeMake(screenSize.width/3, 50)
+        return CGSize(width: screenSize.width/3, height: 50)
     }
     
-    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAtIndex section: Int) -> CGFloat {
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
         return 0.0
     }
     
-    func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
         switch indexPath.item {
         case 0: setCellWhenScrollMenuBar(0)
@@ -86,7 +86,7 @@ class MenuBar: UIView, UICollectionViewDelegate, UICollectionViewDataSource, UIC
         default: break
     }
         
-        UIView.animateWithDuration(0.75, delay: 0.75, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .CurveEaseOut, animations: {
+        UIView.animate(withDuration: 0.75, delay: 0.75, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
             self.layoutIfNeeded()
             }, completion: nil)
         
@@ -94,9 +94,9 @@ class MenuBar: UIView, UICollectionViewDelegate, UICollectionViewDataSource, UIC
         
     }
     
-    func setCellWhenScrollMenuBar(value:CGFloat) {
+    func setCellWhenScrollMenuBar(_ value:CGFloat) {
         
-        horizontalBarView.frame = CGRectMake(value * CGFloat(screenSize.width/3), 47, screenSize.width/3, 5)
+        horizontalBarView.frame = CGRect(x: value * CGFloat(screenSize.width/3), y: 47, width: screenSize.width/3, height: 5)
     }
     
 }

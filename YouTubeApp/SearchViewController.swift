@@ -8,7 +8,7 @@
 
 import UIKit
 protocol SearchViewControllerDelegate {
-    func sendDataToDownload(searchModel:SearchModel)
+    func sendDataToDownload(_ searchModel:SearchModel)
 }
 
 
@@ -38,29 +38,29 @@ class SearchViewController: UIViewController {
     func setupTxtSearch() {
         topsearchContraint.constant = 80;
         self.txtSearch.delegate = self
-        self.txtSearch.returnKeyType = UIReturnKeyType .Go
+        self.txtSearch.returnKeyType = UIReturnKeyType .go
     }
     
-    private func setupTableCell() {
+    fileprivate func setupTableCell() {
         let nibName = UINib(nibName: "SearchTableViewCell", bundle: nil)
-        self.tblView .registerNib(nibName, forCellReuseIdentifier: CELL_ID)
-        self.tblView .backgroundColor = UIColor .clearColor()
+        self.tblView .register(nibName, forCellReuseIdentifier: CELL_ID)
+        self.tblView .backgroundColor = UIColor.clear
         self.tblView.delegate = self
         self.tblView.dataSource = self
     }
     
-    @IBAction func searchData(sender: AnyObject) {
+    @IBAction func searchData(_ sender: AnyObject) {
         let strSearch = txtSearch.text
         loadDataSearch(strSearch!)
         //loadData()
     }
     
-    func loadDataSearch(strSearch:String){
-        SwiftLoading().showLoading()
+    func loadDataSearch(_ strSearch:String){
+        //SwiftLoading().showLoading()
         ShareData.shareInstance.videoSearch .fetchVideosSearch(strSearch, completion: { (result, errCode) in
             self.searchModel = result as? [SearchModel]
                 if self.searchModel != nil {
-                    SwiftLoading().hideLoading()
+                    //SwiftLoading().hideLoading()
                     self.tblView .reloadData()
                 }
             }) { (errorClosure) in
@@ -71,46 +71,40 @@ class SearchViewController: UIViewController {
 
 extension SearchViewController:UITableViewDataSource {
     
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if searchModel == nil {
             return 0
         }
         return searchModel!.count
     }
     
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = self.tblView .dequeueReusableCellWithIdentifier(CELL_ID, forIndexPath: indexPath) as! SearchTableViewCell
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = self.tblView .dequeueReusableCell(withIdentifier: CELL_ID, for: indexPath) as! SearchTableViewCell
         
         cell.delegate = self
         let videoSearch:SearchModel = self.searchModel![indexPath.row]
         
         //title
         cell.lblName.numberOfLines = 0
-        cell.lblName.lineBreakMode = NSLineBreakMode.ByWordWrapping
+        cell.lblName.lineBreakMode = NSLineBreakMode.byWordWrapping
         cell.lblName.text = videoSearch.title
         
         //title
         cell.lblChannel.numberOfLines = 0
-        cell.lblChannel.lineBreakMode = NSLineBreakMode.ByWordWrapping
+        cell.lblChannel.lineBreakMode = NSLineBreakMode.byWordWrapping
         cell.lblChannel.text = videoSearch.channelTitle
         
         //img
         _ = videoSearch.profileImage
-        if let imgURL = videoSearch.profileImage {
-            SwiftImageLoader.sharedLoader.imageForUrl(imgURL) { (image, url) in
-                cell.imgSearch.image = image
-            }
-        }
-        
         return cell
     }
 }
 
 extension SearchViewController:UITableViewDelegate, UIApplicationDelegate {
-    func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 111
     }
-    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let abc:SearchModel = self.searchModel![indexPath.row]
         let videoID:String = abc.videoId!
         
@@ -124,11 +118,11 @@ extension SearchViewController:UITableViewDelegate, UIApplicationDelegate {
 
 extension SearchViewController:SearchTableViewCellDelegate {
     
-    func downloadTapped(sender: AnyObject) {
+    func downloadTapped(_ sender: AnyObject) {
         
         let cell = sender as! SearchTableViewCell
         //cell.btnDownload.hidden = true
-        if let indexPath = tblView.indexPathForCell(cell) {
+        if let indexPath = tblView.indexPath(for: cell) {
             
             let video = searchModel?[indexPath.row]
             
@@ -139,9 +133,9 @@ extension SearchViewController:SearchTableViewCellDelegate {
                 video?.linkDownload = linkDown
                 self.delegate?.sendDataToDownload(video!)
                 }, errorHandler: { (errorClosure) in
-                    let alert = UIAlertController(title: "Alert", message: "Error get API", preferredStyle: UIAlertControllerStyle.Alert)
-                    alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: nil))
-                    self.presentViewController(alert, animated: true, completion: nil)
+                    let alert = UIAlertController(title: "Alert", message: "Error get API", preferredStyle: UIAlertControllerStyle.alert)
+                    alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil))
+                    self.present(alert, animated: true, completion: nil)
                     print("Error get API")
             })
         }
@@ -149,7 +143,7 @@ extension SearchViewController:SearchTableViewCellDelegate {
 }
 
 extension SearchViewController:UITextFieldDelegate {
-    func textFieldShouldReturn(textField: UITextField) -> Bool {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         if textField == self.txtSearch {
             textField.resignFirstResponder()
             let strSearch = txtSearch.text

@@ -13,15 +13,15 @@ import CoreData
 let CELL_ID_DOWNLOAD = "cellID"
 
 class DownloadViewController: UIViewController {
-    enum ErrorEncryption:ErrorType {
-        case Empty
-        case Short
+    enum ErrorEncryption:Error {
+        case empty
+        case short
     }
     @IBOutlet weak var tblDownload: UITableView!
     var activeDownloads = [String: DownloadTask]()
-    lazy var downloadsSession: NSURLSession = {
-        let configuration = NSURLSessionConfiguration.backgroundSessionConfigurationWithIdentifier("bgSessionConfiguration")
-        let session = NSURLSession(configuration: configuration, delegate: self, delegateQueue: nil)
+    lazy var downloadsSession: Foundation.URLSession = {
+        let configuration = URLSessionConfiguration.background(withIdentifier: "bgSessionConfiguration")
+        let session = Foundation.URLSession(configuration: configuration, delegate: self, delegateQueue: nil)
         return session
     }()
     
@@ -36,19 +36,19 @@ class DownloadViewController: UIViewController {
         setupCell()
     }
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
         let appDelegate =
-            UIApplication.sharedApplication().delegate as! AppDelegate
+            UIApplication.shared.delegate as! AppDelegate
         
         let managedContext = appDelegate.managedObjectContext
         
-        let fetchRequest = NSFetchRequest(entityName: "Playlist")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Playlist")
         
         do {
             let results =
-                try managedContext.executeFetchRequest(fetchRequest)
+                try managedContext.fetch(fetchRequest)
             people = results as! [NSManagedObject]
             
         } catch let error as NSError {
@@ -57,27 +57,31 @@ class DownloadViewController: UIViewController {
 
     }
     
+    override func viewDidDisappear(_ animated: Bool) {
+        player?.stop()
+    }
+    
     func setupCell() {
         let nibName = UINib(nibName: "DownloadTableViewCell", bundle: nil)
-        tblDownload.registerNib(nibName, forCellReuseIdentifier: CELL_ID_DOWNLOAD)
+        tblDownload.register(nibName, forCellReuseIdentifier: CELL_ID_DOWNLOAD)
         tblDownload.dataSource = self
         tblDownload.delegate = self
     }
     
     //append at head and download at tail
-    func addDataDownloadArray(video:SearchModel)->Void{
-        arrDownload.insert(video, atIndex: 0)
+    func addDataDownloadArray(_ video:SearchModel)->Void{
+        arrDownload.insert(video, at: 0)
         print("Array download \(arrDownload.count)")
         if arrDownload.count == 1 {
             startDownloadFromArr(arrDownload.last!)
         }
     }
     
-    func startDownloadFromArr(video:SearchModel){
+    func startDownloadFromArr(_ video:SearchModel){
         
-        if let urlString = video.linkDownload, url =  NSURL(string: urlString) {
+        if let urlString = video.linkDownload, let url =  URL(string: urlString) {
             let download = DownloadTask(url: urlString)
-            download.downloadTask = downloadsSession.downloadTaskWithURL(url)
+            download.downloadTask = downloadsSession.downloadTask(with: url)
             download.downloadTask!.resume()
             download.isDownloading = false
             activeDownloads[download.urlDownload!] = download
@@ -85,32 +89,29 @@ class DownloadViewController: UIViewController {
 
     }
     
-    func localFilePathForUrl(previewUrl: String) -> NSURL? {
-        let newStr = previewUrl .stringByTrimmingCharactersInSet(NSCharacterSet .whitespaceCharacterSet()) + ".mp3"
-        let documentsPath = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)[0] as NSString
-        let fullPath = documentsPath.stringByAppendingPathComponent(newStr)
-        return NSURL(fileURLWithPath:fullPath)
+    func localFilePathForUrl(_ previewUrl: String) -> URL? {
+        let newStr = previewUrl .trimmingCharacters(in: CharacterSet.whitespaces) + ".mp3"
+        let documentsPath = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0] as NSString
+        let fullPath = documentsPath.appendingPathComponent(newStr)
+        return URL(fileURLWithPath:fullPath)
     }
     
-    
-    func localFileExistsForTrack(track: SearchModel) -> Bool {
-        if let urlString = track.title, localUrl = localFilePathForUrl(urlString) {
+    func localFileExistsForTrack(_ track: SearchModel) -> Bool {
+        if let urlString = track.title, let localUrl = localFilePathForUrl(urlString) {
             print(localUrl)
             var isDir : ObjCBool = false
-            if let path = localUrl.path {
-                return NSFileManager.defaultManager().fileExistsAtPath(path, isDirectory: &isDir)
-            }
+            return FileManager.default.fileExists(atPath: localUrl.path, isDirectory: &isDir)
         }
         return false
     }
 
     // This method attempts to play the local file (if it exists) when the cell is tapped
-    func playDownload(track: NSManagedObject) {
-        let urlStringTemp = track.valueForKey("title") as? String
+    func playDownload(_ track: NSManagedObject) {
+        let urlStringTemp = track.value(forKey: "title") as? String
         //let urlString = urlStringTemp
         if let urlTemp = localFilePathForUrl(urlStringTemp!) {
             do {
-                player = try AVAudioPlayer(contentsOfURL: urlTemp)
+                player = try AVAudioPlayer(contentsOf: urlTemp)
                 guard let player = player else { return }
                 
                 player.prepareToPlay()
@@ -121,15 +122,15 @@ class DownloadViewController: UIViewController {
         }
     }
     
-    func saveName(title: String, linkDownload: NSString) {
+    func saveName(_ title: String, linkDownload: NSString) {
     
         let appDelegate =
-            UIApplication.sharedApplication().delegate as! AppDelegate
+            UIApplication.shared.delegate as! AppDelegate
         let managedContext = appDelegate.managedObjectContext
-        let entity =  NSEntityDescription.entityForName("Playlist",
-                                                        inManagedObjectContext:managedContext)
+        let entity =  NSEntityDescription.entity(forEntityName: "Playlist",
+                                                        in:managedContext)
         let person = NSManagedObject(entity: entity!,
-                                     insertIntoManagedObjectContext: managedContext)
+                                     insertInto: managedContext)
         
         person.setValue(title, forKey: "title")
         person.setValue(linkDownload, forKey: "linkDownload")
@@ -145,61 +146,61 @@ class DownloadViewController: UIViewController {
 
 extension DownloadViewController:UITableViewDataSource {
     
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tblDownload.dequeueReusableCellWithIdentifier(CELL_ID_DOWNLOAD, forIndexPath: indexPath) as! DownloadTableViewCell
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tblDownload.dequeueReusableCell(withIdentifier: CELL_ID_DOWNLOAD, for: indexPath) as! DownloadTableViewCell
         let arrModel = people[indexPath.row]
-        cell.lblName.text = arrModel.valueForKey("title") as? String
+        cell.lblName.text = arrModel.value(forKey: "title") as? String
         
         return cell
     }
 }
 
 extension DownloadViewController:UITableViewDelegate {
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         print("number row is \(arrDownload.count)")
         return people.count
     }
     
-    func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 60
     }
     
-    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let track = people[indexPath.row]
         playDownload(track)
-        tableView.deselectRowAtIndexPath(indexPath, animated: true)
+        tableView.deselectRow(at: indexPath, animated: true)
     }
     
-    func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
+    func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
         return true
     }
     
-    func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
-        if editingStyle == UITableViewCellEditingStyle.Delete {
-            let appDel:AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == UITableViewCellEditingStyle.delete {
+            let appDel:AppDelegate = UIApplication.shared.delegate as! AppDelegate
             let context:NSManagedObjectContext = appDel.managedObjectContext
-            context.deleteObject(people[indexPath.row] as NSManagedObject)
-            people.removeAtIndex(indexPath.row)
+            context.delete(people[indexPath.row] as NSManagedObject)
+            people.remove(at: indexPath.row)
             do {
                 try context.save()
             } catch let error as NSError  {
                 print("Could not save \(error), \(error.userInfo)")
             }
             
-            tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
+            tableView.deleteRows(at: [indexPath], with: .fade)
         }
     }
 }
     
 // MARK: - NSURLSessionDelegate
 
-extension SearchViewController: NSURLSessionDelegate {
+extension SearchViewController: URLSessionDelegate {
     
-    func URLSessionDidFinishEventsForBackgroundURLSession(session: NSURLSession) {
-        if let appDelegate = UIApplication.sharedApplication().delegate as? AppDelegate {
+    func urlSessionDidFinishEvents(forBackgroundURLSession session: URLSession) {
+        if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
             if let completionHandler = appDelegate.backgroundSessionCompletionHandler {
                 appDelegate.backgroundSessionCompletionHandler = nil
-                dispatch_async(dispatch_get_main_queue(), {
+                DispatchQueue.main.async(execute: {
                     completionHandler()
                 })
             }
@@ -207,11 +208,11 @@ extension SearchViewController: NSURLSessionDelegate {
     }
 }
 
-extension DownloadViewController:NSURLSessionDownloadDelegate {
+extension DownloadViewController:URLSessionDownloadDelegate {
     
-    func URLSession(session: NSURLSession, downloadTask: NSURLSessionDownloadTask, didFinishDownloadingToURL location: NSURL) {
+    func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {
         
-        let downloadUrl = downloadTask.originalRequest?.URL?.absoluteString
+        let downloadUrl = downloadTask.originalRequest?.url?.absoluteString
         let download = activeDownloads[downloadUrl!]
         
         if download?.isDownloading == true {
@@ -219,19 +220,19 @@ extension DownloadViewController:NSURLSessionDownloadDelegate {
             download?.isDownloading = false
             
             if let originalURL = arrDownload.last?.title,
-                destinationURL = localFilePathForUrl(originalURL) {
+                let destinationURL = localFilePathForUrl(originalURL) {
                 
-                let fileManager = NSFileManager.defaultManager()
+                let fileManager = FileManager.default
                 do {
-                    try fileManager.removeItemAtURL(destinationURL)
+                    try fileManager.removeItem(at: destinationURL)
                 } catch {
         
                 }
                 do {
-                    try fileManager.copyItemAtURL(location, toURL: destinationURL)
-                    let strURL = String(destinationURL)
+                    try fileManager.copyItem(at: location, to: destinationURL)
+                    let strURL = String(describing: destinationURL)
                     
-                    saveName((arrDownload.last?.title)!, linkDownload: strURL)
+                    saveName((arrDownload.last?.title)!, linkDownload: strURL as NSString)
                     if self.tblDownload != nil {
                         self.tblDownload .reloadData()
                     }
@@ -249,10 +250,10 @@ extension DownloadViewController:NSURLSessionDownloadDelegate {
             }
         } else {
             let alertController = UIAlertController(title: "Warning", message:
-                "Can't download this file", preferredStyle: UIAlertControllerStyle.Alert)
-            alertController.addAction(UIAlertAction(title: "Dismiss", style: UIAlertActionStyle.Default,handler: nil))
+                "Can't download this file", preferredStyle: UIAlertControllerStyle.alert)
+            alertController.addAction(UIAlertAction(title: "Dismiss", style: UIAlertActionStyle.default,handler: nil))
             
-            self.presentViewController(alertController, animated: true, completion: nil)
+            self.present(alertController, animated: true, completion: nil)
             arrDownload.removeLast()
         }
         
@@ -261,12 +262,12 @@ extension DownloadViewController:NSURLSessionDownloadDelegate {
         }
         
     }
-    func URLSession(session: NSURLSession, downloadTask: NSURLSessionDownloadTask, didWriteData bytesWritten: Int64, totalBytesWritten: Int64, totalBytesExpectedToWrite: Int64) {
+    func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didWriteData bytesWritten: Int64, totalBytesWritten: Int64, totalBytesExpectedToWrite: Int64) {
         
-        if let downloadUrl = downloadTask.originalRequest?.URL?.absoluteString,
-            download = activeDownloads[downloadUrl] {
+        if let downloadUrl = downloadTask.originalRequest?.url?.absoluteString,
+            let download = activeDownloads[downloadUrl] {
             download.progress = Float(totalBytesWritten)/Float(totalBytesExpectedToWrite)
-            let totalSize = NSByteCountFormatter.stringFromByteCount(totalBytesExpectedToWrite, countStyle: NSByteCountFormatterCountStyle.Binary)
+            let totalSize = ByteCountFormatter.string(fromByteCount: totalBytesExpectedToWrite, countStyle: ByteCountFormatter.CountStyle.binary)
             print(totalSize)
             if download.progress == 1 {
                download.isDownloading = true

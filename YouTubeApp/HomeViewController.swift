@@ -9,13 +9,13 @@
 import UIKit
 import GoogleSignIn
 
-let screenSize = UIScreen.mainScreen().bounds
+let screenSize = UIScreen.main.bounds
 let cellHomeId = "cellHomeId"
 let cellTrendingId = "trendingCellId"
 let cellUserId = "cellUserId"
 
 class HomeViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout {
-
+    
     var searchVC:SearchViewController? = nil
     var downloadVC:DownloadViewController? = nil
     var loginVC:LoginViewController?=nil
@@ -33,7 +33,6 @@ class HomeViewController: UICollectionViewController, UICollectionViewDelegateFl
     
     
     override func viewDidLoad() {
-    
         super.viewDidLoad()
         setUpHome()
         setUpMenuBarView()
@@ -44,23 +43,23 @@ class HomeViewController: UICollectionViewController, UICollectionViewDelegateFl
         
         navigationItem.title = "Home"
         
-        navigationController?.navigationBar.barTintColor = UIColor.redColor()
-        collectionView!.backgroundColor = UIColor .whiteColor()
+        navigationController?.navigationBar.barTintColor = UIColor.red
+        collectionView!.backgroundColor = UIColor.white
         
         let homeNib = UINib(nibName: "FeedCell", bundle: nil)
-        collectionView?.registerNib(homeNib, forCellWithReuseIdentifier: cellHomeId)
+        collectionView?.register(homeNib, forCellWithReuseIdentifier: cellHomeId)
         
         let trendingCell = UINib(nibName: "TrendingCollectionViewCell", bundle: nil)
-        collectionView?.registerNib(trendingCell, forCellWithReuseIdentifier: cellTrendingId)
+        collectionView?.register(trendingCell, forCellWithReuseIdentifier: cellTrendingId)
         
         let naviBarSize = self.navigationController!.navigationBar.frame.size.height
         collectionView!.contentInset = UIEdgeInsetsMake(naviBarSize+130, 0, 0, 0)
-        collectionView!.pagingEnabled = true
+        collectionView!.isPagingEnabled = true
     }
     
     func setUpMenuBarView()->Void{
         
-        let a = UIApplication.sharedApplication().statusBarFrame.height
+        let a = UIApplication.shared.statusBarFrame.height
         let b = self.navigationController!.navigationBar.frame.size.height
         let sizeNavi = self.navigationController?.navigationBar.frame.height
         print(sizeNavi!)
@@ -71,13 +70,13 @@ class HomeViewController: UICollectionViewController, UICollectionViewDelegateFl
     
     func setupNavigationBar()->Void {
 
-        let imageBarSearch = UIImage(named: "search_icon")?.imageWithRenderingMode(.AlwaysOriginal)
-        let imageBarMore = UIImage(named: "nav_more_icon")?.imageWithRenderingMode(.AlwaysOriginal)
-        let imageBarUser = UIImage(named: "account")?.imageWithRenderingMode(.AlwaysOriginal)
+        let imageBarSearch = UIImage(named: "search_icon")?.withRenderingMode(.alwaysOriginal)
+        let imageBarMore = UIImage(named: "nav_more_icon")?.withRenderingMode(.alwaysOriginal)
+        let imageBarUser = UIImage(named: "account")?.withRenderingMode(.alwaysOriginal)
         
-        let barButtonSearch:UIBarButtonItem = UIBarButtonItem(image: imageBarSearch, style: .Plain, target: self, action: #selector(handleSearch))
-        let barButtonMore:UIBarButtonItem = UIBarButtonItem(image: imageBarMore, style: .Plain, target: self, action: #selector(handleDownload))
-        let barButtonUser:UIBarButtonItem = UIBarButtonItem(image: imageBarUser, style: .Plain, target: self, action: #selector(handleUser))
+        let barButtonSearch:UIBarButtonItem = UIBarButtonItem(image: imageBarSearch, style: .plain, target: self, action: #selector(handleSearch))
+        let barButtonMore:UIBarButtonItem = UIBarButtonItem(image: imageBarMore, style: .plain, target: self, action: #selector(handleDownload))
+        let barButtonUser:UIBarButtonItem = UIBarButtonItem(image: imageBarUser, style: .plain, target: self, action: #selector(handleUser))
         navigationItem.rightBarButtonItems = [barButtonMore, barButtonSearch]
         navigationItem.leftBarButtonItems = [barButtonUser]
     }
@@ -107,7 +106,7 @@ class HomeViewController: UICollectionViewController, UICollectionViewDelegateFl
         self.navigationController?.pushViewController(loginVC!, animated: true)
     }
     
-    override func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
+    override func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         
         let indexOfView = scrollView.contentOffset.x / screenSize.width
         let intValue = Int(indexOfView)
@@ -129,23 +128,23 @@ class HomeViewController: UICollectionViewController, UICollectionViewDelegateFl
         }
     }
     
-    override func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         
         return 3;
     }
     
-    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         
         return CGSize(width: screenSize.width , height: screenSize.height)
     }
     
-    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAtIndex section: Int) -> CGFloat {
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
         return 0
     }
     
-    override func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
+    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         if indexPath.item == 1 {
-            let cell = collectionView.dequeueReusableCellWithReuseIdentifier(cellHomeId, forIndexPath: indexPath) as! FeedCell
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellHomeId, for: indexPath) as! FeedCell
             cell.delegate = self
             
             return cell
@@ -154,7 +153,7 @@ class HomeViewController: UICollectionViewController, UICollectionViewDelegateFl
         else if indexPath.item == 2 {
             
         }
-        let cell = collectionView.dequeueReusableCellWithReuseIdentifier(cellTrendingId, forIndexPath: indexPath) as! TrendingCollectionViewCell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellTrendingId, for: indexPath) as! TrendingCollectionViewCell
         cell.delegate = self
         
         return cell
@@ -162,14 +161,14 @@ class HomeViewController: UICollectionViewController, UICollectionViewDelegateFl
 }
 
 extension HomeViewController: MenuBarDelegate {
-    func scrollToMenuIndex(menuIndex: Int) {
-        let indexPath = NSIndexPath(forItem: menuIndex, inSection: 0)
-        collectionView?.scrollToItemAtIndexPath(indexPath, atScrollPosition: .None, animated: true)
+    func scrollToMenuIndex(_ menuIndex: Int) {
+        let indexPath = IndexPath(item: menuIndex, section: 0)
+        collectionView?.scrollToItem(at: indexPath, at: UICollectionViewScrollPosition(), animated: true)
     }
 }
 
 extension HomeViewController: SearchViewControllerDelegate {
-    func sendDataToDownload(searchData: SearchModel) {
+    func sendDataToDownload(_ searchData: SearchModel) {
         if downloadVC == nil {
             downloadVC = DownloadViewController(nibName: "DownloadViewController", bundle: nil)
         }
@@ -179,7 +178,7 @@ extension HomeViewController: SearchViewControllerDelegate {
 
 extension HomeViewController:TrendingCollectionViewCellDelegate {
     
-    func playVideoTrend(strVideoId: NSString) {
+    func playVideoTrend(_ strVideoId: NSString) {
         let playVideoVC:PlayVideoViewController = PlayVideoViewController(nibName: "PlayVideoViewController", bundle: nil)
         playVideoVC.videoID = strVideoId as String
         self.navigationController?.pushViewController(playVideoVC, animated: true)
@@ -188,7 +187,8 @@ extension HomeViewController:TrendingCollectionViewCellDelegate {
 
 extension HomeViewController:FeedCellDelegate {
     
-    func playVideoFeed(strVideoId: NSString) {
+    func playVideoFeed(_ strVideoId: NSString) {
+        
         let playVideoVC:PlayVideoViewController = PlayVideoViewController(nibName: "PlayVideoViewController", bundle: nil)
         playVideoVC.videoID = strVideoId as String
         self.navigationController?.pushViewController(playVideoVC, animated: true)

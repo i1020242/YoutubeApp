@@ -9,7 +9,7 @@
 import UIKit
 
 protocol SearchTableViewCellDelegate {
-    func downloadTapped(sender: AnyObject)
+    func downloadTapped(_ sender: AnyObject)
 }
 
 class SearchTableViewCell: UITableViewCell {
@@ -26,13 +26,13 @@ class SearchTableViewCell: UITableViewCell {
         // Initialization code
     }
 
-    override func setSelected(selected: Bool, animated: Bool) {
+    override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
 
         // Configure the view for the selected state
     }
     
-    @IBAction func downloadTapped(sender: AnyObject) {
+    @IBAction func downloadTapped(_ sender: AnyObject) {
         
         delegate?.downloadTapped(self)
     }

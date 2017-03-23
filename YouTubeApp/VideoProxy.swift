@@ -7,38 +7,38 @@
 //
 
 import UIKit
-typealias DidGetResultClosure = (result:AnyObject, errCode:String)->()
-typealias ErrorClosure = (errorClosure:ErrorType)->()
+typealias DidGetResultClosure = (_ result:AnyObject, _ errCode:String)->()
+typealias ErrorClosure = (_ errorClosure:Error)->()
 
 
 class VideoProxy: NSObject {
 
-    private let youtubeURL = "https://www.googleapis.com/youtube/v3/search?part=snippet&q=vatvo&type=video&key=AIzaSyC9doiHcYM5QMhEEwtnyLaIKsHs2UyR0Go"
+    fileprivate let youtubeURL = "https://www.googleapis.com/youtube/v3/search?part=snippet&q=vatvo&type=video&key=AIzaSyC9doiHcYM5QMhEEwtnyLaIKsHs2UyR0Go"
 
-    func fetchVideos(tokenStr:String,completion:DidGetResultClosure, error:ErrorClosure){
+    func fetchVideos(_ tokenStr:String,completion:@escaping DidGetResultClosure, error:@escaping ErrorClosure){
         let urltokenString = "https://www.googleapis.com/youtube/v3/activities?part=snippet&home=true&maxResults=15&access_token=\(tokenStr)"
         fetchDataForKey(urltokenString, completion:completion, errorHandler:error)
     }
     
-    func fetchTrending(completion:DidGetResultClosure, error:ErrorClosure){
+    func fetchTrending(_ completion:@escaping DidGetResultClosure, error:@escaping ErrorClosure){
         let urlTrending = "https://www.googleapis.com/youtube/v3/videos?part=snippet&chart=mostPopular&regionCode=vn&maxResults=25&key=AIzaSyC9doiHcYM5QMhEEwtnyLaIKsHs2UyR0Go"
         fetchDataForKey(urlTrending, completion:completion, errorHandler:error)
     }
         
-    func fetchDataForKey(urlString:String, completion:DidGetResultClosure, errorHandler:ErrorClosure){
+    func fetchDataForKey(_ urlString:String, completion:@escaping DidGetResultClosure, errorHandler:@escaping ErrorClosure){
         
-        let url = NSURL(string: urlString)
+        let url = URL(string: urlString)
         var videosSearch = [SearchModel]()
         
         var arrTemp = [AnyObject]()
-        NSURLSession.sharedSession().dataTaskWithURL(url!) { (data, response, error) in
+        URLSession.shared.dataTask(with: url!, completionHandler: { (data, response, error) in
             if error != nil {
                 print(error)
                 return
             }
             
             do {
-                let json = try NSJSONSerialization.JSONObjectWithData(data!, options: .MutableContainers)
+                let json = try JSONSerialization.jsonObject(with: data!, options: .mutableContainers) as! [String:Any]
                 if let items = json["items"] as? [[String:AnyObject]] {
                     
                     for item in items {
@@ -73,12 +73,12 @@ class VideoProxy: NSObject {
                     }
                     videosSearch = arrTemp as! [SearchModel]
                 }
-                dispatch_async(dispatch_get_main_queue(), {
-                    completion(result: videosSearch, errCode: "errorCode")
+                DispatchQueue.main.async(execute: {
+                    completion(videosSearch as AnyObject, "errorCode")
                 })
             } catch let jsonError{
-                errorHandler(errorClosure: jsonError)
+                errorHandler(jsonError)
             }
-            }.resume()
+            }) .resume()
     }
 }

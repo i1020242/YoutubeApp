@@ -15,13 +15,13 @@ class LoginViewController: UIViewController, GIDSignInUIDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         GIDSignIn.sharedInstance().uiDelegate = self
-        let btnsignIn = GIDSignInButton(frame: CGRectMake(0,0,50,50))
+        let btnsignIn = GIDSignInButton(frame: CGRect(x: 0,y: 0,width: 50,height: 50))
         btnsignIn.center = view.center
-        let btnLogout = UIButton(frame: CGRectMake(0, 400, 100, 50))
+        let btnLogout = UIButton(frame: CGRect(x: 0, y: 400, width: 100, height: 50))
         btnLogout.center.x = view.center.x
-        btnLogout.backgroundColor = UIColor.greenColor()
-        btnLogout.setTitle("Button", forState: UIControlState.Normal)
-        btnLogout .addTarget(self, action: #selector(logout), forControlEvents: .TouchUpInside)
+        btnLogout.backgroundColor = UIColor.green
+        btnLogout.setTitle("Button", for: UIControlState())
+        btnLogout .addTarget(self, action: #selector(logout), for: .touchUpInside)
         view.addSubview(btnsignIn)
         view.addSubview(btnLogout)
         
@@ -41,14 +41,14 @@ class LoginViewController: UIViewController, GIDSignInUIDelegate {
         
     }
     
-    func signIn(signIn: GIDSignIn!,
-                presentViewController viewController: UIViewController!) {
-        self.presentViewController(viewController, animated: true, completion: nil)
+    func sign(_ signIn: GIDSignIn!,
+                present viewController: UIViewController!) {
+        self.present(viewController, animated: true, completion: nil)
     }
     
-    func signIn(signIn: GIDSignIn!,
-                dismissViewController viewController: UIViewController!) {
-        self.dismissViewControllerAnimated(true, completion: nil)
+    func sign(_ signIn: GIDSignIn!,
+                dismiss viewController: UIViewController!) {
+        self.dismiss(animated: true, completion: nil)
     }
     
     

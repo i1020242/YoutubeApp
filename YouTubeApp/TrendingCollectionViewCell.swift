@@ -11,7 +11,7 @@ import Google
 import GoogleSignIn
 
 protocol TrendingCollectionViewCellDelegate {
-    func playVideoTrend(strVideoId:NSString)
+    func playVideoTrend(_ strVideoId:NSString)
 }
 
 let trendingCell = "homeCell"
@@ -22,7 +22,7 @@ class TrendingCollectionViewCell: UICollectionViewCell, GIDSignInDelegate {
     
     lazy var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
-        layout.scrollDirection = .Vertical
+        layout.scrollDirection = .vertical
         let navigation = UINavigationController()
         let b=navigation.navigationBar.frame.size.height
         
@@ -37,10 +37,10 @@ class TrendingCollectionViewCell: UICollectionViewCell, GIDSignInDelegate {
     override func awakeFromNib() {
         super.awakeFromNib()
         //fetchVideo()
-        collectionView.scrollIndicatorInsets = UIEdgeInsetsZero
-        collectionView.backgroundColor = UIColor .whiteColor()
+        collectionView.scrollIndicatorInsets = UIEdgeInsets.zero
+        collectionView.backgroundColor = UIColor.white
         let nibname = UINib(nibName: "HomeCollectionViewCell", bundle: nil)
-        collectionView.registerNib(nibname, forCellWithReuseIdentifier: trendingCell)
+        collectionView.register(nibname, forCellWithReuseIdentifier: trendingCell)
         
         collectionView.contentInset = UIEdgeInsetsMake(0, 0, 0, 0)
         addSubview(collectionView)
@@ -66,16 +66,16 @@ class TrendingCollectionViewCell: UICollectionViewCell, GIDSignInDelegate {
         GIDSignIn.sharedInstance().delegate = self
     }
     
-    func application(application: UIApplication,
-                     openURL url: NSURL, sourceApplication: String?, annotation: AnyObject) -> Bool {
+    func application(_ application: UIApplication,
+                     openURL url: URL, sourceApplication: String?, annotation: AnyObject) -> Bool {
         
-        return GIDSignIn.sharedInstance().handleURL(url,
+        return GIDSignIn.sharedInstance().handle(url,
                                                     sourceApplication: sourceApplication,
                                                     annotation: annotation)
     }
     
-    func signIn(signIn: GIDSignIn!, didSignInForUser user: GIDGoogleUser!,
-                withError error: NSError!) {
+    func sign(_ signIn: GIDSignIn!, didSignInFor user: GIDGoogleUser!,
+                withError error: Error!) {
         if (error == nil) {
             
             let fullName = user.profile.name
@@ -88,7 +88,7 @@ class TrendingCollectionViewCell: UICollectionViewCell, GIDSignInDelegate {
             print("\(error.localizedDescription)")
         }
     }
-    func signIn(signIn: GIDSignIn!, didDisconnectWithUser user: GIDGoogleUser!, withError error: NSError!) {
+    func sign(_ signIn: GIDSignIn!, didDisconnectWith user: GIDGoogleUser!, withError error: NSError!) {
         
     }
 }
@@ -100,38 +100,38 @@ extension TrendingCollectionViewCell:UICollectionViewDelegate {
 //MARK: CollectionView DataSource
 extension TrendingCollectionViewCell:UICollectionViewDataSource {
     
-    func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if videos == nil {
             return 0
         }
         return videos!.count
     }
     
-    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: IndexPath) -> CGSize {
         
         let height = (frame.width - 16 - 16) * 9 / 16
-        return CGSizeMake(frame.width, height + 16 + 88)
+        return CGSize(width: frame.width, height: height + 16 + 88)
     }
     
-    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAtIndex section: Int) -> CGFloat {
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAtIndex section: Int) -> CGFloat {
         return 0
     }
     
-    func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCellWithReuseIdentifier(trendingCell, forIndexPath: indexPath)
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: trendingCell, for: indexPath)
             as! HomeCollectionViewCell
-        cell.backgroundColor = UIColor .whiteColor()
+        cell.backgroundColor = UIColor.white
         let video = self.videos![indexPath.item]
         
         cell.lblName.text = video.title
         cell.lblArtist.text = video.channelTitle
         if (video.profileImage != nil) {
-            let urlProfile = NSURL(string: (video.profileImage)!)
-            let urlBackground = NSURL(string: (video.profileImage)!)
-            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
-                let data = NSData(contentsOfURL: urlProfile!)
-                let dataThumnail = NSData(contentsOfURL: urlBackground!)
-                dispatch_async(dispatch_get_main_queue(), {
+            let urlProfile = URL(string: (video.profileImage)!)
+            let urlBackground = URL(string: (video.profileImage)!)
+            DispatchQueue.global(priority: DispatchQueue.GlobalQueuePriority.default).async {
+                let data = try? Data(contentsOf: urlProfile!)
+                let dataThumnail = try? Data(contentsOf: urlBackground!)
+                DispatchQueue.main.async(execute: {
                     cell.img.image = UIImage(data: data!)
                     cell.m_backgroundImg.image = UIImage(data: dataThumnail!)
                 });
@@ -140,12 +140,12 @@ extension TrendingCollectionViewCell:UICollectionViewDataSource {
         
         return cell
     }
-    func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
         let abc:SearchModel = self.videos![indexPath.row]
         let videoID:String = abc.videoId!
         let youtubeURL = "https://www.youtube.com/embed/\(videoID)"
-        self.delegate?.playVideoTrend(youtubeURL)
+        self.delegate?.playVideoTrend(youtubeURL as NSString)
     }
 }
 

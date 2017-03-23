@@ -15,18 +15,18 @@ class PlayVideoViewController: UIViewController, UIApplicationDelegate {
     var videoID:String?
     override func viewDidLoad() {
         super.viewDidLoad()
-        let youtubeURL: NSURL = NSURL(string: videoID!)!
-        m_webView.loadRequest(NSURLRequest(URL: youtubeURL))
-        let value = UIInterfaceOrientation.LandscapeRight.rawValue
-        UIDevice.currentDevice().setValue(value, forKey: "orientation")
+        let youtubeURL: URL = URL(string: videoID!)!
+        m_webView.loadRequest(URLRequest(url: youtubeURL))
+        let value = UIInterfaceOrientation.portrait.rawValue
+        UIDevice.current.setValue(value, forKey: "orientation")
     }
     
-    override func viewWillDisappear(animated: Bool) {
-        let value = UIInterfaceOrientation.Portrait.rawValue
-        UIDevice.currentDevice().setValue(value, forKey: "orientation")
+    override func viewWillDisappear(_ animated: Bool) {
+        let value = UIInterfaceOrientation.portrait.rawValue
+        UIDevice.current.setValue(value, forKey: "orientation")
     }
     
-    override func shouldAutorotate() -> Bool {
+    override var shouldAutorotate : Bool {
         return false
     }
 
