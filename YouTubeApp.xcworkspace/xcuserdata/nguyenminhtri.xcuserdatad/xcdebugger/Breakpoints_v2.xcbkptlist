@@ -9,13 +9,13 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "YouTubeApp/VideoProxy.swift"
-            timestampString = "512004868.319699"
+            filePath = "YouTubeApp/TrendingCollectionViewCell.swift"
+            timestampString = "512230412.546224"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "74"
-            endingLineNumber = "74"
-            landmarkName = "fetchDataForKey(_:completion:errorHandler:)"
+            startingLineNumber = "81"
+            endingLineNumber = "81"
+            landmarkName = "sign(_:didSignInFor:withError:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -26,12 +26,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "YouTubeApp/FeedCell.swift"
-            timestampString = "512005209.056154"
+            timestampString = "512231556.10886"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "58"
-            endingLineNumber = "58"
-            landmarkName = "fetchVideo()"
+            startingLineNumber = "22"
+            endingLineNumber = "22"
+            landmarkName = "sign(_:didSignInFor:withError:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

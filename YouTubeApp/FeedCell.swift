@@ -19,6 +19,19 @@ let homeCell = "homeCell"
 class FeedCell: UICollectionViewCell, UICollectionViewDelegateFlowLayout,GIDSignInDelegate {
     public func sign(_ signIn: GIDSignIn!, didSignInFor user: GIDGoogleUser!, withError error: Error!) {
         //
+        if (error == nil) {
+            
+            let fullName = user.profile.name
+            print(fullName)
+            let email = user.profile.email
+            print(email)
+            
+            //fetchVideo when finish login
+            fetchVideo()
+        } else {
+            
+            print("\(error.localizedDescription)")
+        }
     }
 
     
@@ -73,21 +86,6 @@ class FeedCell: UICollectionViewCell, UICollectionViewDelegateFlowLayout,GIDSign
         return GIDSignIn.sharedInstance().handle(url,
                                                     sourceApplication: sourceApplication,
                                                     annotation: annotation)
-    }
-    
-    func sign(_ signIn: GIDSignIn!, didSignInFor user: GIDGoogleUser!,
-                withError error: NSError!) {
-        if (error == nil) {
-            
-            let fullName = user.profile.name
-            print(fullName)
-            let email = user.profile.email
-            print(email)
-            fetchVideo()
-        } else {
-            
-            print("\(error.localizedDescription)")
-        }
     }
 }
 
